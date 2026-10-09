@@ -1178,7 +1178,8 @@
             .process-step { flex-direction: column; align-items: flex-start; }
             .step-number { left: 24px; width: 48px; height: 48px; font-size: 1.05rem; top: 0; }
             .step-content { width: calc(100% - 64px); margin-left: 64px !important; }
-            .reveal.from-left, .reveal.from-right { transform: translateX(40px); }
+            /* On small screens slide up instead of sideways, and never override the finished state */
+            .reveal.from-left:not(.in), .reveal.from-right:not(.in) { transform: translateY(40px); }
 
             .founder-card { padding: 2.2rem 1.4rem; }
             .contact-info, .contact-form { padding: 1.6rem; }
