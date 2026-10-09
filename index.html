@@ -638,6 +638,120 @@
 
         .service-card p { color: var(--text-muted); }
 
+        /* ---------- Case studies ---------- */
+        .case-list { display: flex; flex-direction: column; gap: 2.5rem; }
+
+        .case {
+            display: grid;
+            grid-template-columns: 1.05fr 1fr;
+            gap: 0;
+            border-radius: 24px;
+        }
+
+        .case:nth-child(even) .case-visual { order: 2; }
+
+        .case-visual {
+            position: relative;
+            min-height: 360px;
+            background:
+                radial-gradient(circle at 30% 20%, rgba(43,127,255,0.22), transparent 60%),
+                linear-gradient(160deg, rgba(10,15,46,0.9), rgba(5,10,33,0.95));
+            border-right: 1px solid var(--border);
+            display: grid;
+            place-items: center;
+            padding: 1.5rem;
+            overflow: hidden;
+        }
+
+        .case:nth-child(even) .case-visual { border-right: none; border-left: 1px solid var(--border); }
+
+        .case-visual::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(74,159,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(74,159,255,0.07) 1px, transparent 1px);
+            background-size: 28px 28px;
+            -webkit-mask: radial-gradient(circle at center, #000 30%, transparent 75%);
+            mask: radial-gradient(circle at center, #000 30%, transparent 75%);
+        }
+
+        .case-visual svg { position: relative; width: 100%; max-width: 440px; height: auto; overflow: visible; }
+
+        .case-body { padding: 2.4rem 2.4rem 2.2rem; text-align: left; }
+
+        .case-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+
+        .case-tag {
+            font-family: var(--font-head);
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 0.35rem 0.8rem;
+            border-radius: 30px;
+            color: var(--accent);
+            background: rgba(0, 212, 255, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .case-tag.alt { color: var(--silver); background: rgba(255,255,255,0.04); border-color: var(--border); }
+
+        .case-body h3 { font-size: 1.55rem; line-height: 1.25; color: white; margin-bottom: 0.9rem; }
+
+        .case-body .case-summary { color: var(--text-muted); margin-bottom: 1.4rem; }
+
+        .case-points { list-style: none; display: grid; gap: 0.75rem; margin-bottom: 1.5rem; }
+
+        .case-points li {
+            position: relative;
+            padding-left: 1.6rem;
+            color: rgba(255,255,255,0.86);
+            font-size: 0.95rem;
+        }
+
+        .case-points li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.5em;
+            width: 9px;
+            height: 9px;
+            border-radius: 2px;
+            transform: rotate(45deg);
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent));
+            box-shadow: 0 0 10px rgba(0,212,255,0.6);
+        }
+
+        .case-points strong { color: var(--light-blue); font-weight: 600; }
+
+        .case-stack { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+
+        .case-stack span {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.75rem;
+            border-radius: 8px;
+            background: rgba(43,127,255,0.12);
+            border: 1px solid rgba(43,127,255,0.25);
+            color: #cfe0ff;
+        }
+
+        /* diagram animation primitives */
+        .flow { stroke-dasharray: 6 8; animation: flow 1.2s linear infinite; }
+        @keyframes flow { to { stroke-dashoffset: -28; } }
+        .blink { animation: blinkSoft 2s ease-in-out infinite; }
+        @keyframes blinkSoft { 50% { opacity: 0.25; } }
+        .chart-line { stroke-dasharray: 400; stroke-dashoffset: 400; animation: chartDraw 4s ease-in-out infinite; }
+        @keyframes chartDraw { 0% { stroke-dashoffset: 400; } 45%, 80% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -400; } }
+        .alert-ring { transform-box: fill-box; transform-origin: center; animation: alertPing 2s ease-out infinite; }
+        @keyframes alertPing { 0% { transform: scale(0.6); opacity: 0.9; } 100% { transform: scale(2.4); opacity: 0; } }
+        .paver-spin { transform-origin: 220px 170px; animation: spin 24s linear infinite; }
+        .paver-pulse { transform-origin: 220px 170px; animation: spin 6s linear infinite; }
+        .stage { transition: none; }
+        .stage-hl { animation: stageHl 6s linear infinite; opacity: 0; }
+        @keyframes stageHl { 0%, 14% { opacity: 1; } 18%, 100% { opacity: 0; } }
+        .doc-scan { animation: scan 2.4s ease-in-out infinite; }
+        @keyframes scan { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(46px); } }
+
         /* ---------- About ---------- */
         .about-content {
             display: grid;
@@ -1164,6 +1278,10 @@
             nav:has(.nav-links.active) { background: rgba(5, 10, 33, 0.97); }
 
             .about-content { grid-template-columns: 1fr; gap: 3rem; }
+            .case { grid-template-columns: 1fr; }
+            .case:nth-child(even) .case-visual { order: 0; border-left: none; }
+            .case-visual { border-right: none; border-bottom: 1px solid var(--border); min-height: 280px; }
+            .case:nth-child(even) .case-visual { border-bottom: 1px solid var(--border); }
             .contact-content { grid-template-columns: 1fr; }
         }
 
@@ -1182,6 +1300,8 @@
             .reveal.from-left:not(.in), .reveal.from-right:not(.in) { transform: translateY(40px); }
 
             .founder-card { padding: 2.2rem 1.4rem; }
+            .case-body { padding: 1.8rem 1.4rem; }
+            .case-body h3 { font-size: 1.3rem; }
             .contact-info, .contact-form { padding: 1.6rem; }
             .orbit .node span { width: 70px; height: 32px; left: -35px; top: -16px; font-size: 0.72rem; }
             .scroll-cue { display: none; }
@@ -1236,6 +1356,7 @@
             <ul class="nav-links" id="navLinks">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#services">Services</a></li>
+                <li><a href="#work">Our Work</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#process">Process</a></li>
                 <li><a href="#why-choose">Why Us</a></li>
@@ -1419,6 +1540,149 @@
                     <h3>Custom AI Integration</h3>
                     <p>Seamlessly integrate AI capabilities into your existing systems and workflows with our tailored implementation services.</p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Case Studies -->
+    <section class="section" id="work">
+        <div class="container">
+            <span class="eyebrow reveal">Case studies</span>
+            <h2 class="section-title reveal">Our Work</h2>
+            <p class="section-lead reveal">A look at AI systems we have designed, built and put into production</p>
+            <div class="title-bar"></div>
+
+            <div class="case-list">
+
+                <!-- Case 1: ML quality monitoring -->
+                <article class="case glass reveal">
+                    <div class="case-visual" aria-hidden="true">
+                        <svg viewBox="0 0 440 320">
+                            <!-- region inputs -->
+                            <g font-family="Sora, sans-serif" font-size="11" font-weight="600" fill="#e0e0f0">
+                                <rect x="10" y="30" width="78" height="30" rx="15" fill="rgba(10,15,46,0.9)" stroke="#2B7FFF"/><text x="49" y="49" text-anchor="middle">US</text>
+                                <rect x="10" y="78" width="78" height="30" rx="15" fill="rgba(10,15,46,0.9)" stroke="#2B7FFF"/><text x="49" y="97" text-anchor="middle">APAC</text>
+                                <rect x="10" y="126" width="78" height="30" rx="15" fill="rgba(10,15,46,0.9)" stroke="#2B7FFF"/><text x="49" y="145" text-anchor="middle">Arabic</text>
+                                <rect x="10" y="174" width="78" height="30" rx="15" fill="rgba(10,15,46,0.9)" stroke="#2B7FFF"/><text x="49" y="193" text-anchor="middle">Spanish</text>
+                                <rect x="10" y="222" width="78" height="30" rx="15" fill="rgba(10,15,46,0.9)" stroke="#2B7FFF"/><text x="49" y="241" text-anchor="middle">Portuguese</text>
+                            </g>
+                            <g stroke="#00d4ff" stroke-width="1.5" fill="none" class="flow">
+                                <path d="M88 45 C120 45 120 140 150 140"/><path d="M88 93 C120 93 120 140 150 140"/>
+                                <path d="M88 141 H150"/><path d="M88 189 C120 189 120 140 150 140"/><path d="M88 237 C120 237 120 140 150 140"/>
+                            </g>
+                            <!-- model -->
+                            <rect x="150" y="105" width="90" height="70" rx="14" fill="url(#strategyGrad)"/>
+                            <text x="195" y="135" text-anchor="middle" fill="#fff" font-family="Sora, sans-serif" font-size="12" font-weight="700">Fine-tuned</text>
+                            <text x="195" y="152" text-anchor="middle" fill="#fff" font-family="Sora, sans-serif" font-size="12" font-weight="700">XLM-R</text>
+                            <path d="M240 140 H268" stroke="#00d4ff" stroke-width="1.5" class="flow"/>
+                            <!-- dashboard -->
+                            <rect x="268" y="40" width="162" height="200" rx="14" fill="rgba(10,15,46,0.95)" stroke="rgba(74,159,255,0.5)"/>
+                            <text x="282" y="64" fill="#c0c0d0" font-family="Inter, sans-serif" font-size="10" letter-spacing="1">ACCURACY BY QUARTER</text>
+                            <g stroke="rgba(255,255,255,0.08)"><path d="M282 90 H416 M282 125 H416 M282 160 H416"/></g>
+                            <path d="M286 120 L318 108 L350 100 L382 150 L412 112" stroke="#00d4ff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="chart-line"/>
+                            <circle cx="382" cy="150" r="5" fill="#ff5d7a"/>
+                            <circle cx="382" cy="150" r="5" fill="none" stroke="#ff5d7a" stroke-width="2" class="alert-ring"/>
+                            <text x="282" y="196" fill="#c0c0d0" font-family="Inter, sans-serif" font-size="10">Agreement</text>
+                            <rect x="282" y="202" width="134" height="8" rx="4" fill="rgba(255,255,255,0.08)"/>
+                            <rect x="282" y="202" width="110" height="8" rx="4" fill="url(#accentGrad)"/>
+                            <text x="282" y="228" fill="#ff8fa3" font-family="Inter, sans-serif" font-size="10" class="blink">⚠ Dip detected → alert sent</text>
+                        </svg>
+                    </div>
+                    <div class="case-body">
+                        <div class="case-tags"><span class="case-tag">Client project</span><span class="case-tag alt">Location data · MLOps</span></div>
+                        <h3>Multilingual ML Quality Monitoring for Place Categorization</h3>
+                        <p class="case-summary">A global location-data provider needed to know, before its customers did, whether the categories assigned to millions of places were still accurate. We built an automated pipeline that uses fine-tuned language models to audit those labels across regions and track quality over time.</p>
+                        <ul class="case-points">
+                            <li><strong>Scheduled audits</strong> run monthly or quarterly across five regional models (US, APAC, Arabic, Spanish and Portuguese), scoring agreement with existing labels.</li>
+                            <li><strong>Disagreement analysis</strong> separates genuine model errors from errors in the source data, with a manual review interface to confirm findings.</li>
+                            <li><strong>Trend tracking and alerts</strong> monitor accuracy quarter over quarter, and any dip triggers an email investigation report.</li>
+                            <li><strong>Event-driven AWS deployment</strong>: a file upload triggers GPU inference on Spot instances, keeping idle costs to a few dollars a month.</li>
+                        </ul>
+                        <div class="case-stack"><span>XLM-RoBERTa</span><span>PyTorch</span><span>Hugging Face</span><span>Streamlit</span><span>AWS Lambda</span><span>EC2 Spot GPU</span><span>S3</span></div>
+                    </div>
+                </article>
+
+                <!-- Case 2: Integration Agent -->
+                <article class="case glass reveal">
+                    <div class="case-visual" aria-hidden="true">
+                        <svg viewBox="0 0 440 340">
+                            <circle cx="220" cy="170" r="120" fill="none" stroke="rgba(74,159,255,0.25)" stroke-width="1.5" stroke-dasharray="4 8" class="paver-spin"/>
+                            <g class="paver-pulse"><circle cx="220" cy="50" r="6" fill="#00d4ff"/><circle cx="220" cy="50" r="12" fill="none" stroke="#00d4ff" opacity="0.4"/></g>
+                            <circle cx="220" cy="170" r="54" fill="url(#strategyGrad)"/>
+                            <text x="220" y="165" text-anchor="middle" fill="#fff" font-family="Sora, sans-serif" font-size="13" font-weight="800">Integration</text>
+                            <text x="220" y="183" text-anchor="middle" fill="#fff" font-family="Sora, sans-serif" font-size="13" font-weight="800">Agent</text>
+                            <g font-family="Sora, sans-serif" font-size="11" font-weight="700" text-anchor="middle">
+                                <!-- 6 stages at 60deg steps, r=120 -->
+                                <g><rect x="178" y="32" width="84" height="36" rx="18" fill="rgba(10,15,46,0.95)" stroke="#2B7FFF"/><rect x="178" y="32" width="84" height="36" rx="18" fill="rgba(0,212,255,0.25)" stroke="#00d4ff" class="stage-hl" style="animation-delay:0s"/><text x="220" y="55" fill="#e0e0f0">Plan</text></g>
+                                <g><rect x="282" y="92" width="84" height="36" rx="18" fill="rgba(10,15,46,0.95)" stroke="#2B7FFF"/><rect x="282" y="92" width="84" height="36" rx="18" fill="rgba(0,212,255,0.25)" stroke="#00d4ff" class="stage-hl" style="animation-delay:1s"/><text x="324" y="115" fill="#e0e0f0">Act</text></g>
+                                <g><rect x="282" y="212" width="84" height="36" rx="18" fill="rgba(10,15,46,0.95)" stroke="#2B7FFF"/><rect x="282" y="212" width="84" height="36" rx="18" fill="rgba(0,212,255,0.25)" stroke="#00d4ff" class="stage-hl" style="animation-delay:2s"/><text x="324" y="235" fill="#e0e0f0">Validate</text></g>
+                                <g><rect x="178" y="272" width="84" height="36" rx="18" fill="rgba(10,15,46,0.95)" stroke="#2B7FFF"/><rect x="178" y="272" width="84" height="36" rx="18" fill="rgba(0,212,255,0.25)" stroke="#00d4ff" class="stage-hl" style="animation-delay:3s"/><text x="220" y="295" fill="#e0e0f0">Execute</text></g>
+                                <g><rect x="74" y="212" width="84" height="36" rx="18" fill="rgba(10,15,46,0.95)" stroke="#2B7FFF"/><rect x="74" y="212" width="84" height="36" rx="18" fill="rgba(0,212,255,0.25)" stroke="#00d4ff" class="stage-hl" style="animation-delay:4s"/><text x="116" y="235" fill="#e0e0f0">Re-evaluate</text></g>
+                                <g><rect x="74" y="92" width="84" height="36" rx="18" fill="rgba(10,15,46,0.95)" stroke="#2B7FFF"/><rect x="74" y="92" width="84" height="36" rx="18" fill="rgba(0,212,255,0.25)" stroke="#00d4ff" class="stage-hl" style="animation-delay:5s"/><text x="116" y="115" fill="#e0e0f0">Share</text></g>
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="case-body">
+                        <div class="case-tags"><span class="case-tag">Client project</span><span class="case-tag alt">Mapping · Agentic AI</span></div>
+                        <h3>Agentic Integration Agent for Points-of-Interest Data Maintenance</h3>
+                        <p class="case-summary">A mapping and location-intelligence company was struggling to keep a multi-million-place database fresh: closed businesses still showing as open, missing contact details, and conflicting supplier data. We built the Integration Agent at the heart of their multi-agent maintenance framework.</p>
+                        <ul class="case-points">
+                            <li><strong>PAVER workflow</strong> (Plan, Act, Validate, Execute, Re-evaluate, Share) gives every update a structured, auditable path.</li>
+                            <li><strong>Picks up candidates from an upstream Query Agent</strong> and enriches them through an AI web-verification service.</li>
+                            <li><strong>Smart comparison</strong> of current and enriched data: open/closed status, address and contact details, and category matching across two different taxonomies.</li>
+                            <li><strong>Review dashboard and full audit trail</strong>, with every request, response and decision logged per batch in cloud storage.</li>
+                        </ul>
+                        <div class="case-stack"><span>Agentic AI</span><span>Multi-agent design</span><span>Python</span><span>Streamlit</span><span>AWS S3</span><span>Parquet / Pandas</span></div>
+                    </div>
+                </article>
+
+                <!-- Case 3: ComplianceAI Suite (in-house) -->
+                <article class="case glass reveal">
+                    <div class="case-visual" aria-hidden="true">
+                        <svg viewBox="0 0 440 320">
+                            <!-- document -->
+                            <rect x="14" y="80" width="86" height="112" rx="8" fill="rgba(10,15,46,0.95)" stroke="#4A9FFF"/>
+                            <g stroke="rgba(224,224,240,0.35)" stroke-width="3" stroke-linecap="round">
+                                <path d="M28 102 H86 M28 116 H78 M28 130 H86 M28 144 H70 M28 158 H86 M28 172 H62"/>
+                            </g>
+                            <rect x="20" y="96" width="74" height="12" rx="3" fill="rgba(0,212,255,0.3)" class="doc-scan"/>
+                            <text x="57" y="212" text-anchor="middle" fill="#c0c0d0" font-family="Inter, sans-serif" font-size="10">Contracts</text>
+                            <path d="M100 136 H130" stroke="#00d4ff" stroke-width="1.5" class="flow"/>
+                            <!-- retrieval -->
+                            <g font-family="Sora, sans-serif" font-size="10.5" font-weight="700" text-anchor="middle" fill="#e0e0f0">
+                                <rect x="130" y="70" width="96" height="30" rx="8" fill="rgba(10,15,46,0.95)" stroke="#2B7FFF"/><text x="178" y="89">Keyword (BM25)</text>
+                                <rect x="130" y="172" width="96" height="30" rx="8" fill="rgba(10,15,46,0.95)" stroke="#2B7FFF"/><text x="178" y="191">Vector search</text>
+                                <rect x="130" y="121" width="96" height="30" rx="8" fill="url(#strategyGrad)"/><text x="178" y="140" fill="#fff">Hybrid fusion</text>
+                                <rect x="252" y="121" width="80" height="30" rx="8" fill="rgba(10,15,46,0.95)" stroke="#00d4ff"/><text x="292" y="140">Re-rank</text>
+                            </g>
+                            <g stroke="#00d4ff" stroke-width="1.5" fill="none" class="flow">
+                                <path d="M178 100 V121"/><path d="M178 172 V151"/><path d="M226 136 H252"/><path d="M332 136 H352"/>
+                            </g>
+                            <!-- answer -->
+                            <rect x="352" y="88" width="80" height="96" rx="12" fill="rgba(10,15,46,0.95)" stroke="#4A9FFF"/>
+                            <text x="392" y="110" text-anchor="middle" fill="#00d4ff" font-family="Sora, sans-serif" font-size="10.5" font-weight="700">LLM answer</text>
+                            <g stroke="rgba(224,224,240,0.35)" stroke-width="3" stroke-linecap="round"><path d="M364 126 H420 M364 138 H410 M364 150 H418"/></g>
+                            <rect x="364" y="160" width="40" height="14" rx="7" fill="rgba(0,212,255,0.18)" stroke="#00d4ff" class="blink"/>
+                            <text x="384" y="170" text-anchor="middle" fill="#00d4ff" font-family="Inter, sans-serif" font-size="8">[cite]</text>
+                            <!-- eval loop -->
+                            <path d="M392 184 C392 262 178 262 178 202" stroke="rgba(74,159,255,0.5)" stroke-width="1.5" fill="none" stroke-dasharray="4 6" class="flow"/>
+                            <text x="285" y="256" text-anchor="middle" fill="#c0c0d0" font-family="Inter, sans-serif" font-size="10">Faithfulness &amp; recall evaluation</text>
+                        </svg>
+                    </div>
+                    <div class="case-body">
+                        <div class="case-tags"><span class="case-tag">In-house platform</span><span class="case-tag alt">Legal &amp; compliance · GenAI</span></div>
+                        <h3>ComplianceAI Suite: Legal &amp; Compliance Intelligence Platform</h3>
+                        <p class="case-summary">Our own enterprise GenAI platform for contract review and compliance Q&amp;A, built on 500+ public commercial contracts annotated across 41 legal clause types. It is the reference architecture we bring to legal and compliance engagements.</p>
+                        <ul class="case-points">
+                            <li><strong>Grounded RAG with citations</strong>: every answer is traced back to the exact contract passage it came from.</li>
+                            <li><strong>Hybrid retrieval</strong> fuses keyword and semantic search, then a cross-encoder re-ranks results for precision.</li>
+                            <li><strong>Multi-provider by design</strong>: swap between Anthropic, OpenAI and AWS Bedrock models and embeddings without code changes.</li>
+                            <li><strong>Domain fine-tuning</strong> of an open-source LLM with QLoRA for clause classification, with experiment tracking and automated quality evaluation.</li>
+                        </ul>
+                        <div class="case-stack"><span>RAG</span><span>ChromaDB</span><span>BM25 + RRF</span><span>Cross-encoder</span><span>QLoRA · Mistral-7B</span><span>MLflow</span><span>Docker</span></div>
+                    </div>
+                </article>
+
             </div>
         </div>
     </section>
