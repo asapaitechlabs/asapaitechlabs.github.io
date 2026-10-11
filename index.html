@@ -83,7 +83,7 @@
             border-radius: 50%;
             filter: blur(90px);
             opacity: 0.22;
-            animation: drift 22s ease-in-out infinite alternate;
+            animation: drift 40s ease-in-out infinite alternate;
         }
 
         .bg-glow span:nth-child(1) { width: 520px; height: 520px; background: var(--primary-blue); top: -120px; left: -140px; }
@@ -96,30 +96,16 @@
             100% { transform: translate(-60px, 100px) scale(0.95); }
         }
 
-        .cursor-glow {
-            position: fixed;
-            width: 420px;
-            height: 420px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: -1;
-            background: radial-gradient(circle, rgba(43, 127, 255, 0.13) 0%, transparent 65%);
-            transform: translate(-50%, -50%);
-            transition: opacity 0.4s ease;
-            opacity: 0;
-        }
-
         .scroll-progress {
             position: fixed;
             top: 0;
             left: 0;
-            height: 3px;
+            height: 2px;
             width: 100%;
             transform-origin: 0 50%;
             transform: scaleX(0);
             background: linear-gradient(90deg, var(--deep-blue), var(--primary-blue), var(--accent));
             z-index: 1100;
-            box-shadow: 0 0 12px var(--accent);
         }
 
         /* ---------- Navigation ---------- */
@@ -133,13 +119,20 @@
             border-bottom: 1px solid transparent;
         }
 
-        nav.scrolled {
-            padding: 0.6rem 5%;
+        nav::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: -1;
             background: rgba(5, 10, 33, 0.82);
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
-            border-color: var(--border);
+            opacity: 0;
+            transition: opacity 300ms var(--ease-out);
         }
+
+        nav.scrolled { padding: 0.6rem 5%; border-color: var(--border); }
+        nav.scrolled::before { opacity: 1; }
 
         .nav-container {
             display: flex;
@@ -179,14 +172,19 @@
 
         .nav-links {
             display: flex;
-            gap: 2rem;
+            gap: 0.25rem;
             list-style: none;
+            position: relative;
         }
 
         .nav-links a {
+            display: block;
+            padding: 0.45rem 0.85rem;
+            border-radius: 999px;
             color: var(--text-light);
             text-decoration: none;
             position: relative;
+            z-index: 1;
             font-size: 0.95rem;
             transition: color var(--dur-ui) var(--ease-out);
         }
@@ -194,9 +192,9 @@
         .nav-links a::after {
             content: '';
             position: absolute;
-            bottom: -6px;
-            left: 0;
-            width: 100%;
+            bottom: 0.1rem;
+            left: 0.85rem;
+            right: 0.85rem;
             height: 2px;
             background: linear-gradient(90deg, var(--primary-blue), var(--accent));
             transform: scaleX(0);
@@ -205,6 +203,21 @@
         }
 
         .nav-links a.active { color: var(--accent); }
+
+        /* Hover highlight that glides between links */
+        .nav-pill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 0;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.07);
+            pointer-events: none;
+            opacity: 0;
+            transition: transform 250ms var(--ease-out), width 250ms var(--ease-out), opacity 150ms var(--ease-out);
+        }
+        .nav-pill.no-move { transition: opacity 150ms var(--ease-out); }
+        .drawer-handle, .nav-backdrop { display: none; }
         .nav-links a.active::after { transform: scaleX(1); transform-origin: left; }
 
         .menu-toggle {
@@ -280,13 +293,13 @@
         }
 
         .ring { transform-origin: 200px 200px; fill: none; }
-        .ring-1 { stroke: rgba(74, 159, 255, 0.35); stroke-width: 1.2; stroke-dasharray: 6 10; animation: spin 40s linear infinite; }
-        .ring-2 { stroke: rgba(0, 212, 255, 0.45); stroke-width: 1.5; stroke-dasharray: 120 520; animation: spin 9s linear infinite reverse; }
-        .ring-3 { stroke: rgba(192, 192, 208, 0.18); stroke-width: 1; animation: spin 60s linear infinite; }
+        .ring-1 { stroke: rgba(74, 159, 255, 0.3); stroke-width: 1.2; stroke-dasharray: 6 10; }
+        .ring-2 { stroke: rgba(0, 212, 255, 0.45); stroke-width: 1.5; stroke-dasharray: 120 520; transform: rotate(-60deg); }
+        .ring-3 { stroke: rgba(192, 192, 208, 0.14); stroke-width: 1; }
         .ring-trace { stroke: url(#traceGrad); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 1400; stroke-dashoffset: 1400; animation: trace 2.4s cubic-bezier(.6,.05,.3,1) 0.3s forwards; }
 
-        .orbit-dot { animation: spin 14s linear infinite; transform-origin: 200px 200px; }
-        .orbit-dot.slow { animation-duration: 22s; animation-direction: reverse; }
+        .orbit-dot { animation: spin 60s linear infinite; transform-origin: 200px 200px; }
+        .orbit-dot.slow { animation-duration: 90s; animation-direction: reverse; }
 
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes trace { to { stroke-dashoffset: 0; } }
@@ -298,7 +311,7 @@
             border-radius: 50%;
             background: radial-gradient(circle, rgba(43, 127, 255, 0.55) 0%, rgba(0, 212, 255, 0.12) 45%, transparent 70%);
             filter: blur(20px);
-            animation: pulse 4s ease-in-out infinite;
+            opacity: 0.85;
         }
 
         @keyframes pulse {
@@ -310,7 +323,7 @@
             position: relative;
             width: 46%;
             transform-style: preserve-3d;
-            animation: logoIn 1s var(--ease-out) both, heroFloat 6s ease-in-out 1s infinite;
+            animation: logoIn 1s var(--ease-out) both, heroFloat 8s ease-in-out 1s infinite;
             will-change: transform;
         }
 
@@ -322,25 +335,6 @@
             transition: transform 400ms var(--ease-out);
         }
 
-        /* Light sweep across the logo, clipped to its shape */
-        .hero-logo::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.55) 50%, transparent 65%);
-            background-size: 250% 100%;
-            -webkit-mask: url(assets/logo-mark.webp) center / contain no-repeat;
-            mask: url(assets/logo-mark.webp) center / contain no-repeat;
-            animation: sweep 5s ease-in-out 1.8s infinite;
-            mix-blend-mode: overlay;
-            pointer-events: none;
-        }
-
-        @keyframes sweep {
-            0% { background-position: 150% 0; }
-            40%, 100% { background-position: -100% 0; }
-        }
-
         @keyframes logoIn {
             from { opacity: 0; transform: scale(0.9) rotateY(-24deg); filter: blur(8px); }
             to { opacity: 1; transform: scale(1) rotateY(0); filter: blur(0); }
@@ -348,24 +342,21 @@
 
         @keyframes heroFloat {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
+            50% { transform: translateY(-8px); }
         }
 
         .hero h1 {
             font-size: clamp(1.9rem, 4.2vw, 3.1rem);
             line-height: 1.15;
             font-weight: 800;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.02em;
             margin-bottom: 1rem;
-            background: linear-gradient(110deg, var(--light-blue) 0%, var(--accent) 30%, #ffffff 50%, var(--accent) 70%, var(--light-blue) 100%);
-            background-size: 220% auto;
+            background: linear-gradient(180deg, #ffffff 15%, var(--light-blue) 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: fadeInUp 800ms var(--ease-out) 0.55s backwards, shine 7s linear 1.6s infinite;
+            animation: fadeInUp 800ms var(--ease-out) 0.55s backwards;
         }
-
-        @keyframes shine { to { background-position: 220% center; } }
 
         .hero .tagline {
             font-size: clamp(1.05rem, 2.2vw, 1.3rem);
@@ -384,18 +375,23 @@
         }
 
         .typing-line .label { color: var(--silver); }
-        .typing-line .typed { color: white; font-weight: 600; }
-        .typing-line .caret {
-            display: inline-block;
-            width: 2px;
-            height: 1.1em;
-            background: var(--accent);
-            margin-left: 3px;
-            vertical-align: -0.15em;
-            animation: blink 1s steps(1) infinite;
-        }
 
-        @keyframes blink { 50% { opacity: 0; } }
+        /* Rotating word: old word lifts out, new one settles in, width glides between them */
+        .rotator {
+            display: inline-grid;
+            vertical-align: bottom;
+            text-align: left;
+            color: white;
+            font-weight: 600;
+            transition: width 400ms var(--ease-out);
+        }
+        .rotator-word {
+            grid-area: 1 / 1;
+            white-space: nowrap;
+            transition: opacity 400ms var(--ease-out), transform 400ms var(--ease-out), filter 400ms var(--ease-out);
+        }
+        .rotator-word.enter { opacity: 0; transform: translateY(0.45em); filter: blur(4px); }
+        .rotator-word.exit { opacity: 0; transform: translateY(-0.45em); filter: blur(4px); }
 
         .cta-buttons {
             display: flex;
@@ -498,8 +494,9 @@
             display: block;
             text-align: center;
             font-family: var(--font-head);
-            font-size: 0.8rem;
-            letter-spacing: 5px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.28em;
             text-transform: uppercase;
             color: var(--accent);
             margin-bottom: 0.75rem;
@@ -509,7 +506,8 @@
             text-align: center;
             font-size: clamp(2rem, 4vw, 2.9rem);
             font-weight: 800;
-            line-height: 1.2;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
             margin-bottom: 1rem;
             background: linear-gradient(135deg, #ffffff 10%, var(--light-blue) 55%, var(--accent));
             -webkit-background-clip: text;
@@ -559,6 +557,7 @@
             border-radius: 20px;
             position: relative;
             overflow: hidden;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
 
         .glass::before {
@@ -638,7 +637,98 @@
         .service-card p { color: var(--text-muted); }
 
         /* ---------- Case studies ---------- */
-        .case-list { display: flex; flex-direction: column; gap: 2.5rem; }
+        .case-tabs-wrap { display: flex; justify-content: center; margin-bottom: 2rem; }
+
+        .case-tabs {
+            position: relative;
+            display: inline-flex;
+            gap: 0.25rem;
+            padding: 0.3rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            max-width: 100%;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .case-tabs::-webkit-scrollbar { display: none; }
+
+        .case-tab {
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+            padding: 0.55rem 1.15rem;
+            border: none;
+            border-radius: 999px;
+            background: none;
+            color: var(--text-muted);
+            font-family: var(--font-head);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color var(--dur-ui) var(--ease-out), transform var(--dur-press) var(--ease-out);
+        }
+        .case-tab[aria-selected="true"] { color: white; }
+        .case-tab:active { transform: scale(0.97); }
+
+        .case-tab-indicator {
+            position: absolute;
+            top: 0.3rem;
+            bottom: 0.3rem;
+            left: 0;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--deep-blue), var(--primary-blue));
+            box-shadow: 0 4px 14px rgba(43, 127, 255, 0.35);
+            transition: transform 350ms var(--ease-out), width 350ms var(--ease-out);
+        }
+
+        .case[hidden] { display: none; }
+        .case-list { position: relative; transition: height 400ms var(--ease-out); }
+        .case.entering { animation: caseIn 400ms var(--ease-out); }
+        @keyframes caseIn {
+            from { opacity: 0; transform: translateY(8px); filter: blur(4px); }
+        }
+
+        .case-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.5rem 0.95rem;
+            border-radius: 999px;
+            border: 1px solid rgba(74, 159, 255, 0.35);
+            background: rgba(43, 127, 255, 0.08);
+            color: var(--light-blue);
+            font-family: var(--font-head);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color var(--dur-ui) var(--ease-out), transform var(--dur-press) var(--ease-out);
+        }
+        .case-more:active { transform: scale(0.97); }
+        .case-more svg { transition: transform 300ms var(--ease-out); }
+        .case-more[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+        /* Height animates via grid rows, content fades in slightly after */
+        .case-details {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 400ms var(--ease-out);
+        }
+        .case-details.open { grid-template-rows: 1fr; }
+        .case-details-inner {
+            min-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            filter: blur(4px);
+            transition: opacity 250ms var(--ease-out), filter 250ms var(--ease-out);
+        }
+        .case-details.open .case-details-inner {
+            opacity: 1;
+            filter: none;
+            transition-duration: 400ms;
+            transition-delay: 80ms;
+        }
+        .case-details-inner > :first-child { margin-top: 1.4rem; }
 
         .case {
             display: grid;
@@ -646,8 +736,6 @@
             gap: 0;
             border-radius: 24px;
         }
-
-        .case:nth-child(even) .case-visual { order: 2; }
 
         .case-visual {
             position: relative;
@@ -661,8 +749,6 @@
             padding: 1.5rem;
             overflow: hidden;
         }
-
-        .case:nth-child(even) .case-visual { border-right: none; border-left: 1px solid var(--border); }
 
         .case-visual::before {
             content: '';
@@ -697,7 +783,8 @@
 
         .case-body h3 { font-size: 1.55rem; line-height: 1.25; color: white; margin-bottom: 0.9rem; }
 
-        .case-body .case-summary { color: var(--text-muted); margin-bottom: 1.4rem; }
+        .case-body .case-summary { color: var(--text-muted); margin-bottom: 1.2rem; }
+        .case-body { align-self: center; }
 
         .case-points { list-style: none; display: grid; gap: 0.75rem; margin-bottom: 1.5rem; }
 
@@ -790,14 +877,12 @@
             inset: -20%;
             border-radius: 50%;
             background: radial-gradient(circle, rgba(43,127,255,0.45), transparent 65%);
-            animation: pulse 4s ease-in-out infinite;
         }
 
         .orbit-system .core img {
             width: 100%;
             height: auto;
             position: relative;
-            animation: heroFloat 5s ease-in-out infinite;
             filter: drop-shadow(0 10px 30px rgba(23, 71, 214, 0.6));
         }
 
@@ -808,8 +893,8 @@
             animation: spin linear infinite;
         }
 
-        .orbit.o1 { inset: 18%; animation-duration: 18s; }
-        .orbit.o2 { inset: 4%; animation-duration: 30s; animation-direction: reverse; border-style: solid; border-color: rgba(255,255,255,0.07); }
+        .orbit.o1 { inset: 18%; animation-duration: 60s; }
+        .orbit.o2 { inset: 4%; animation-duration: 90s; animation-direction: reverse; border-style: solid; border-color: rgba(255,255,255,0.07); }
 
         .orbit .node {
             position: absolute;
@@ -842,8 +927,8 @@
         /* counter-rotate labels against their ring so they stay upright */
         .orbit.o1 .node { --r: calc(var(--size) * 0.32); }
         .orbit.o2 .node { --r: calc(var(--size) * 0.46); }
-        .orbit.o1 .node span { animation-duration: 18s; animation-direction: reverse; }
-        .orbit.o2 .node span { animation-duration: 30s; animation-direction: normal; }
+        .orbit.o1 .node span { animation-duration: 60s; animation-direction: reverse; }
+        .orbit.o2 .node span { animation-duration: 90s; animation-direction: normal; }
 
         /* ---------- Process ---------- */
         .process-timeline {
@@ -952,26 +1037,16 @@
         @keyframes draw { to { stroke-dashoffset: 0; } }
         @keyframes redraw { 0% { stroke-dashoffset: 30; } 100% { stroke-dashoffset: 0; } }
 
-        /* ---------- Technologies marquee ---------- */
-        .marquee {
-            overflow: hidden;
-            padding: 0.6rem 0;
-            -webkit-mask: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
-            mask: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
-        }
-
-        .marquee + .marquee { margin-top: 1rem; }
-
-        .marquee-track {
+        /* ---------- Technologies ---------- */
+        .tech-grid {
+            list-style: none;
             display: flex;
-            gap: 1.2rem;
-            width: max-content;
-            animation: marquee 38s linear infinite;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            max-width: 880px;
+            margin: 0 auto;
         }
-
-        .marquee.reverse .marquee-track { animation-direction: reverse; animation-duration: 44s; }
-
-        @keyframes marquee { to { transform: translateX(calc(-50% - 0.6rem)); } }
 
         .tech-item {
             display: flex;
@@ -979,10 +1054,11 @@
             gap: 0.6rem;
             white-space: nowrap;
             background: var(--card);
-            padding: 1rem 1.7rem;
+            padding: 0.75rem 1.35rem;
             border-radius: 50px;
             border: 1px solid var(--border);
             font-family: var(--font-head);
+            font-size: 0.95rem;
             font-weight: 600;
             transition: background-color var(--dur-ui) var(--ease-out), border-color var(--dur-ui) var(--ease-out), transform var(--dur-ui) var(--ease-out);
         }
@@ -1015,12 +1091,8 @@
             margin: 0 auto;
             padding: 2px;
             border-radius: 26px;
-            background: conic-gradient(from var(--angle, 0deg), var(--deep-blue), var(--accent), transparent 30%, transparent 60%, var(--primary-blue), var(--deep-blue));
-            animation: borderSpin 6s linear infinite;
+            background: linear-gradient(140deg, rgba(0, 212, 255, 0.55), rgba(43, 127, 255, 0.12) 35%, rgba(255, 255, 255, 0.05) 65%, rgba(43, 127, 255, 0.45));
         }
-
-        @property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
-        @keyframes borderSpin { to { --angle: 360deg; } }
 
         .founder-mark {
             width: 72px;
@@ -1107,7 +1179,71 @@
         .info-item p { color: var(--text-muted); margin: 0; }
         .info-item a { color: var(--accent); text-decoration: none; transition: color var(--dur-ui) var(--ease-out); }
 
+        .email-row { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+
+        .copy-btn {
+            position: relative;
+            width: 30px;
+            height: 30px;
+            display: grid;
+            place-items: center;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: transform var(--dur-press) var(--ease-out), color var(--dur-ui) var(--ease-out), border-color var(--dur-ui) var(--ease-out);
+        }
+        .copy-btn:active { transform: scale(0.9); }
+        .copy-btn svg {
+            grid-area: 1 / 1;
+            transition: opacity var(--dur-ui) var(--ease-out), transform var(--dur-ui) var(--ease-out), filter var(--dur-ui) var(--ease-out);
+        }
+        .copy-btn .i-check { opacity: 0; transform: scale(0.5); filter: blur(4px); }
+        .copy-btn.copied { color: var(--accent); border-color: rgba(0, 212, 255, 0.4); }
+        .copy-btn.copied .i-copy { opacity: 0; transform: scale(0.5); filter: blur(4px); }
+        .copy-btn.copied .i-check { opacity: 1; transform: none; filter: none; }
+        .copy-btn::after {
+            content: 'Copied';
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            background: white;
+            color: var(--bg-dark);
+            font-size: 0.72rem;
+            font-weight: 600;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transform: translate(-50%, 4px) scale(0.96);
+            transform-origin: bottom center;
+            transition: opacity 150ms var(--ease-out), transform 150ms var(--ease-out);
+        }
+        .copy-btn.copied::after { opacity: 1; transform: translate(-50%, 0) scale(1); }
+
         .contact-form { text-align: left; padding: 2.2rem; }
+
+        /* Send button: label morphs between states, width stays put */
+        .btn-send { display: grid; place-items: center; width: 100%; }
+        .btn-send .lbl {
+            grid-area: 1 / 1;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: opacity var(--dur-ui) var(--ease-out), transform var(--dur-ui) var(--ease-out), filter var(--dur-ui) var(--ease-out);
+        }
+        .btn-send .lbl:not(.on) { opacity: 0; transform: translateY(6px); filter: blur(3px); pointer-events: none; }
+        .btn-send[data-state="loading"] { cursor: progress; }
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-top-color: white;
+            animation: spin 700ms linear infinite;
+        }
 
         .form-group { position: relative; margin-bottom: 1.4rem; }
 
@@ -1200,13 +1336,8 @@
             left: 0;
             width: 100%;
             height: 1px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            background-size: 50% 100%;
-            background-repeat: no-repeat;
-            animation: footerLine 6s linear infinite;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.5), transparent);
         }
-
-        @keyframes footerLine { from { background-position: -50% 0; } to { background-position: 150% 0; } }
 
         .footer-content { max-width: 1400px; margin: 0 auto; }
         .footer-content .logo { justify-content: center; margin-bottom: 1rem; }
@@ -1238,6 +1369,10 @@
 
         .copyright { margin-top: 2rem; color: rgba(255, 255, 255, 0.5); font-size: 0.9rem; }
 
+        /* Decorative loops only run while hovered or on screen */
+        .anim-idle, .anim-idle * { animation-play-state: paused !important; }
+        .anim-idle .check-draw { animation-play-state: running !important; }
+
         /* ---------- Hover effects: only for devices that can truly hover ---------- */
         @media (hover: hover) and (pointer: fine) {
             .logo:hover img { transform: rotate(-12deg) scale(1.08); }
@@ -1258,7 +1393,6 @@
             .feature-card:hover { transform: translateY(-6px); border-color: rgba(43, 127, 255, 0.4); box-shadow: 0 20px 40px rgba(23, 71, 214, 0.25); }
             .feature-card:hover .check-draw { animation: redraw 600ms var(--ease-out) forwards; }
 
-            .marquee:hover .marquee-track { animation-play-state: paused; }
             .tech-item:hover { background: rgba(43, 127, 255, 0.18); border-color: var(--primary-blue); transform: translateY(-3px); }
 
             .cta-card:hover { transform: translateY(-4px); border-color: rgba(43,127,255,0.45); }
@@ -1267,6 +1401,9 @@
 
             .social-links a:hover { background: var(--primary-blue); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(43,127,255,0.4); }
             .social-links a:hover:active { transform: scale(0.94); }
+            .case-tab:not([aria-selected="true"]):hover { color: white; }
+            .case-more:hover { background: rgba(43, 127, 255, 0.16); }
+            .copy-btn:hover { color: white; border-color: rgba(255, 255, 255, 0.2); }
         }
 
         /* ---------- Responsive ---------- */
@@ -1276,44 +1413,77 @@
         }
 
         @media (max-width: 900px) {
+            /* Vaul-style bottom sheet: drag it down to close */
             .nav-links {
-                position: absolute;
-                top: 100%;
+                position: fixed;
                 left: 0;
-                width: 100%;
-                background: rgba(5, 10, 33, 0.97);
-                backdrop-filter: blur(14px);
+                right: 0;
+                bottom: 0;
+                z-index: 2;
                 flex-direction: column;
                 gap: 0;
-                padding: 0.5rem 5% 1rem;
-                border-bottom: 1px solid var(--border);
-                clip-path: inset(0 0 100% 0);
-                transition: clip-path 300ms var(--ease-out);
+                max-height: 85vh;
+                padding: 0 1.25rem calc(1.25rem + env(safe-area-inset-bottom));
+                background: #0b1130;
+                border: 1px solid var(--border);
+                border-bottom: none;
+                border-radius: 22px 22px 0 0;
+                box-shadow: 0 -24px 60px rgba(0, 0, 0, 0.55);
+                touch-action: none;
+                visibility: hidden;
+                transform: translateY(100%);
+                transition: transform 500ms var(--ease-drawer), visibility 0s 500ms;
             }
+            .nav-links.active {
+                visibility: visible;
+                transform: translateY(var(--drag, 0px));
+                transition: transform 500ms var(--ease-drawer), visibility 0s;
+            }
+            .nav-links.dragging { transition: none; }
 
-            .nav-links.active { clip-path: inset(0 0 0 0); transition-duration: 500ms; transition-timing-function: var(--ease-drawer); }
-            .nav-links li {
-                padding: 0.75rem 0;
-                border-bottom: 1px solid rgba(255,255,255,0.05);
+            .drawer-handle {
+                display: block;
+                width: 40px;
+                height: 5px;
+                margin: 0.6rem auto 0.9rem;
+                border-radius: 3px;
+                background: rgba(255, 255, 255, 0.22);
+            }
+            .nav-pill { display: none; }
+
+            .nav-links li:not(.drawer-handle) {
+                border-bottom: 1px solid rgba(255,255,255,0.06);
                 opacity: 0;
-                transform: translateY(-6px);
+                transform: translateY(8px);
                 transition: opacity 150ms var(--ease-out), transform 150ms var(--ease-out);
             }
-            .nav-links.active li {
+            .nav-links.active li:not(.drawer-handle) {
                 opacity: 1;
                 transform: none;
-                transition-duration: 350ms;
-                transition-delay: calc(var(--i, 0) * 30ms + 60ms);
+                transition-duration: 400ms;
+                transition-delay: calc(var(--i, 0) * 30ms + 80ms);
             }
             .nav-links li:last-child { border-bottom: none; }
+            .nav-links a { padding: 0.85rem 0.25rem; border-radius: 10px; font-size: 1.1rem; -webkit-user-drag: none; user-select: none; }
+            .nav-links a::after { display: none; }
+
+            .nav-backdrop {
+                display: block;
+                position: fixed;
+                inset: 0;
+                z-index: 999;
+                background: rgba(2, 5, 18, 0.6);
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 500ms var(--ease-drawer);
+            }
+            .nav-backdrop.show { opacity: 1; pointer-events: auto; }
+
             .menu-toggle { display: flex; }
-            nav:has(.nav-links.active) { background: rgba(5, 10, 33, 0.97); }
 
             .about-content { grid-template-columns: 1fr; gap: 3rem; }
             .case { grid-template-columns: 1fr; }
-            .case:nth-child(even) .case-visual { order: 0; border-left: none; }
             .case-visual { border-right: none; border-bottom: 1px solid var(--border); min-height: 280px; }
-            .case:nth-child(even) .case-visual { border-bottom: 1px solid var(--border); }
             .contact-content { grid-template-columns: 1fr; }
         }
 
@@ -1333,6 +1503,7 @@
 
             .founder-card { padding: 2.2rem 1.4rem; }
             .case-body { padding: 1.8rem 1.4rem; }
+            .case-tab { padding: 0.5rem 0.75rem; font-size: 0.84rem; }
             .case-body h3 { font-size: 1.3rem; }
             .contact-info, .contact-form { padding: 1.6rem; }
             .orbit .node span { width: 70px; height: 32px; left: -35px; top: -16px; font-size: 0.72rem; }
@@ -1354,7 +1525,6 @@
 <body>
     <canvas id="neural-bg" aria-hidden="true"></canvas>
     <div class="bg-glow" aria-hidden="true"><span></span><span></span><span></span></div>
-    <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
     <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
     <!-- Shared SVG gradients -->
@@ -1387,6 +1557,7 @@
                 </div>
             </a>
             <ul class="nav-links" id="navLinks">
+                <li class="drawer-handle" aria-hidden="true"></li>
                 <li><a href="#home">Home</a></li>
                 <li><a href="#services">Services</a></li>
                 <li><a href="#work">Our Work</a></li>
@@ -1401,6 +1572,8 @@
             </button>
         </div>
     </nav>
+
+    <div class="nav-backdrop" id="navBackdrop" aria-hidden="true"></div>
 
     <!-- Hero -->
     <section class="hero" id="home">
@@ -1428,7 +1601,7 @@
             <h2 class="hero-wordmark"><img src="assets/logo-wordmark.webp" alt="ASAP.ai TECHLABS" width="541" height="179"></h2>
             <h1>AI-First Solutions for Tomorrow's Challenges</h1>
             <p class="tagline">Transform your business with cutting-edge AI, Machine Learning, and Generative AI technologies</p>
-            <p class="typing-line" aria-hidden="true"><span class="label">We build </span><span class="typed" id="typed"></span><span class="caret"></span></p>
+            <p class="typing-line" aria-hidden="true"><span class="label">We build </span><span class="rotator" id="rotator"><span class="rotator-word">LLM-powered copilots</span></span></p>
             <div class="cta-buttons">
                 <a href="#contact" class="btn btn-primary">Get Started</a>
                 <a href="#services" class="btn btn-secondary">Explore Services</a>
@@ -1585,10 +1758,19 @@
             <p class="section-lead reveal">AI systems we have built and put to work</p>
             <div class="title-bar"></div>
 
-            <div class="case-list">
+            <div class="case-tabs-wrap reveal">
+                <div class="case-tabs" role="tablist" aria-label="Case studies">
+                    <span class="case-tab-indicator" aria-hidden="true"></span>
+                    <button type="button" class="case-tab" role="tab" id="case-tab-1" aria-controls="case-1" aria-selected="true" tabindex="0">Data QA</button>
+                    <button type="button" class="case-tab" role="tab" id="case-tab-2" aria-controls="case-2" aria-selected="false" tabindex="-1">Listings agent</button>
+                    <button type="button" class="case-tab" role="tab" id="case-tab-3" aria-controls="case-3" aria-selected="false" tabindex="-1">Contract AI</button>
+                </div>
+            </div>
+
+            <div class="case-list" id="caseList">
 
                 <!-- Case 1: ML quality monitoring -->
-                <article class="case glass reveal">
+                <article class="case glass in" id="case-1" role="tabpanel" aria-labelledby="case-tab-1">
                     <div class="case-visual" aria-hidden="true">
                         <svg viewBox="0 0 440 320">
                             <!-- region inputs -->
@@ -1625,17 +1807,22 @@
                         <div class="case-tags"><span class="case-tag">Client project</span><span class="case-tag alt">Location data · MLOps</span></div>
                         <h3>Automated AI Quality Checks for Global Location Data</h3>
                         <p class="case-summary">A global location-data company needed to spot wrong place categories before its customers did. We built an AI system that checks them automatically.</p>
-                        <ul class="case-points">
-                            <li><strong>Automatic checks</strong> every month or quarter, across five markets.</li>
-                            <li><strong>Finds the real cause</strong> of each mismatch: a model mistake or bad source data.</li>
-                            <li><strong>Early alerts</strong> when quality drops, at a very low cloud cost.</li>
-                        </ul>
-                        <div class="case-stack"><span>XLM-RoBERTa</span><span>PyTorch</span><span>Hugging Face</span><span>Streamlit</span><span>AWS</span></div>
+                        <button type="button" class="case-more" aria-expanded="false" aria-controls="case-details-1"><span>How it works</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+                        <div class="case-details" id="case-details-1">
+                            <div class="case-details-inner">
+                                <ul class="case-points">
+                                    <li><strong>Automatic checks</strong> every month or quarter, across five markets.</li>
+                                    <li><strong>Finds the real cause</strong> of each mismatch: a model mistake or bad source data.</li>
+                                    <li><strong>Early alerts</strong> when quality drops, at a very low cloud cost.</li>
+                                </ul>
+                                <div class="case-stack"><span>XLM-RoBERTa</span><span>PyTorch</span><span>Hugging Face</span><span>Streamlit</span><span>AWS</span></div>
+                            </div>
+                        </div>
                     </div>
                 </article>
 
                 <!-- Case 2: listing maintenance agent -->
-                <article class="case glass reveal">
+                <article class="case glass in" id="case-2" role="tabpanel" aria-labelledby="case-tab-2" hidden>
                     <div class="case-visual" aria-hidden="true">
                         <svg viewBox="0 0 440 340">
                             <circle cx="220" cy="170" r="120" fill="none" stroke="rgba(74,159,255,0.25)" stroke-width="1.5" stroke-dasharray="4 8" class="loop-spin"/>
@@ -1658,17 +1845,22 @@
                         <div class="case-tags"><span class="case-tag">Client project</span><span class="case-tag alt">Mapping · AI agents</span></div>
                         <h3>AI Agent That Keeps Business Listings Up to Date</h3>
                         <p class="case-summary">A mapping company had millions of listings going stale: closed shops shown as open, missing details and conflicting sources. We built an AI agent that finds and fixes them.</p>
-                        <ul class="case-points">
-                            <li><strong>Checks every change</strong> step by step before it goes live.</li>
-                            <li><strong>Verifies status, address and category</strong> against live web data.</li>
-                            <li><strong>Keeps a full record</strong> of every decision, with a review dashboard.</li>
-                        </ul>
-                        <div class="case-stack"><span>AI agents</span><span>Python</span><span>Streamlit</span><span>AWS S3</span></div>
+                        <button type="button" class="case-more" aria-expanded="false" aria-controls="case-details-2"><span>How it works</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+                        <div class="case-details" id="case-details-2">
+                            <div class="case-details-inner">
+                                <ul class="case-points">
+                                    <li><strong>Checks every change</strong> step by step before it goes live.</li>
+                                    <li><strong>Verifies status, address and category</strong> against live web data.</li>
+                                    <li><strong>Keeps a full record</strong> of every decision, with a review dashboard.</li>
+                                </ul>
+                                <div class="case-stack"><span>AI agents</span><span>Python</span><span>Streamlit</span><span>AWS S3</span></div>
+                            </div>
+                        </div>
                     </div>
                 </article>
 
                 <!-- Case 3: contract review platform -->
-                <article class="case glass reveal">
+                <article class="case glass in" id="case-3" role="tabpanel" aria-labelledby="case-tab-3" hidden>
                     <div class="case-visual" aria-hidden="true">
                         <svg viewBox="0 0 440 320">
                             <!-- document -->
@@ -1704,12 +1896,17 @@
                         <div class="case-tags"><span class="case-tag">Our platform</span><span class="case-tag alt">Legal · GenAI</span></div>
                         <h3>AI Platform for Contract Review</h3>
                         <p class="case-summary">Our own AI platform that reads contracts and answers legal and compliance questions, built on 500+ real agreements.</p>
-                        <ul class="case-points">
-                            <li><strong>Answers with sources</strong>: each answer links to the exact clause it came from.</li>
-                            <li><strong>Smart search</strong> that understands both keywords and meaning.</li>
-                            <li><strong>Works with any major AI model</strong>, plus one tuned for legal language.</li>
-                        </ul>
-                        <div class="case-stack"><span>RAG</span><span>ChromaDB</span><span>Fine-tuning</span><span>MLflow</span><span>Docker</span></div>
+                        <button type="button" class="case-more" aria-expanded="false" aria-controls="case-details-3"><span>How it works</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+                        <div class="case-details" id="case-details-3">
+                            <div class="case-details-inner">
+                                <ul class="case-points">
+                                    <li><strong>Answers with sources</strong>: each answer links to the exact clause it came from.</li>
+                                    <li><strong>Smart search</strong> that understands both keywords and meaning.</li>
+                                    <li><strong>Works with any major AI model</strong>, plus one tuned for legal language.</li>
+                                </ul>
+                                <div class="case-stack"><span>RAG</span><span>ChromaDB</span><span>Fine-tuning</span><span>MLflow</span><span>Docker</span></div>
+                            </div>
+                        </div>
                     </div>
                 </article>
 
@@ -1858,26 +2055,20 @@
             <span class="eyebrow reveal">Our toolkit</span>
             <h2 class="section-title reveal">Technologies We Master</h2>
             <div class="title-bar"></div>
-        </div>
-        <div class="marquee reveal" aria-label="Technologies">
-            <div class="marquee-track">
-                <div class="tech-item">TensorFlow</div>
-                <div class="tech-item">PyTorch</div>
-                <div class="tech-item">OpenAI GPT</div>
-                <div class="tech-item">LangChain</div>
-                <div class="tech-item">Hugging Face</div>
-                <div class="tech-item">Azure AI</div>
-            </div>
-        </div>
-        <div class="marquee reverse reveal" style="--d:0.15s">
-            <div class="marquee-track">
-                <div class="tech-item">AWS SageMaker</div>
-                <div class="tech-item">Google Cloud AI</div>
-                <div class="tech-item">Scikit-learn</div>
-                <div class="tech-item">Computer Vision</div>
-                <div class="tech-item">NLP</div>
-                <div class="tech-item">MLOps</div>
-            </div>
+            <ul class="tech-grid" aria-label="Technologies">
+                <li class="tech-item reveal" style="--d:0.00s">TensorFlow</li>
+                <li class="tech-item reveal" style="--d:0.03s">PyTorch</li>
+                <li class="tech-item reveal" style="--d:0.06s">OpenAI GPT</li>
+                <li class="tech-item reveal" style="--d:0.09s">LangChain</li>
+                <li class="tech-item reveal" style="--d:0.12s">Hugging Face</li>
+                <li class="tech-item reveal" style="--d:0.15s">Azure AI</li>
+                <li class="tech-item reveal" style="--d:0.18s">AWS SageMaker</li>
+                <li class="tech-item reveal" style="--d:0.21s">Google Cloud AI</li>
+                <li class="tech-item reveal" style="--d:0.24s">Scikit-learn</li>
+                <li class="tech-item reveal" style="--d:0.27s">Computer Vision</li>
+                <li class="tech-item reveal" style="--d:0.30s">NLP</li>
+                <li class="tech-item reveal" style="--d:0.33s">MLOps</li>
+            </ul>
         </div>
     </section>
 
@@ -1970,7 +2161,13 @@
                         </div>
                         <div>
                             <strong>Email</strong>
-                            <p><a href="mailto:contact@asapaitechlabs.com">contact@asapaitechlabs.com</a></p>
+                            <p class="email-row">
+                                <a href="mailto:contact@asapaitechlabs.com">contact@asapaitechlabs.com</a>
+                                <button type="button" class="copy-btn" id="copyEmail" data-copy="contact@asapaitechlabs.com" aria-label="Copy email address">
+                                    <svg class="i-copy" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                    <svg class="i-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                                </button>
+                            </p>
                         </div>
                     </div>
                     <div class="info-item">
@@ -2004,7 +2201,11 @@
                         <textarea id="message" name="message" placeholder=" " required></textarea>
                         <label for="message">Project Details</label>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+                    <button type="submit" class="btn btn-primary btn-send" id="sendBtn" data-state="idle">
+                        <span class="lbl on" data-for="idle">Send Message</span>
+                        <span class="lbl" data-for="loading" aria-hidden="true"><span class="spinner"></span>Preparing email…</span>
+                        <span class="lbl" data-for="done" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Opened in your email app</span>
+                    </button>
                 </form>
             </div>
         </div>
@@ -2044,20 +2245,79 @@
         const finePointer = window.matchMedia('(pointer: fine)').matches;
         document.getElementById('year').textContent = new Date().getFullYear();
 
-        /* ---------- Mobile menu ---------- */
+        /* ---------- Mobile menu (bottom sheet) ---------- */
         const menuToggle = document.getElementById('menuToggle');
         const navLinks = document.getElementById('navLinks');
-        navLinks.querySelectorAll('li').forEach((li, i) => li.style.setProperty('--i', i));
-        menuToggle.addEventListener('click', () => {
-            const open = navLinks.classList.toggle('active');
+        const navBackdrop = document.getElementById('navBackdrop');
+        const linkItems = [...navLinks.querySelectorAll('li:not(.drawer-handle)')];
+        linkItems.forEach((li, i) => li.style.setProperty('--i', i));
+
+        function setMenu(open) {
+            navLinks.classList.toggle('active', open);
+            navBackdrop.classList.toggle('show', open);
             menuToggle.classList.toggle('open', open);
             menuToggle.setAttribute('aria-expanded', open);
+            navLinks.style.setProperty('--drag', '0px');
+            document.documentElement.style.overflow = open ? 'hidden' : '';
+        }
+        menuToggle.addEventListener('click', () => setMenu(!navLinks.classList.contains('active')));
+        navBackdrop.addEventListener('click', () => setMenu(false));
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && navLinks.classList.contains('active')) setMenu(false); });
+        navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+
+        // Drag the sheet down to dismiss; a quick flick is enough
+        let sheetY = null, sheetT = 0, sheetDragged = false;
+        navLinks.addEventListener('pointerdown', e => {
+            if (!navLinks.classList.contains('active')) return;
+            sheetY = e.clientY; sheetT = Date.now(); sheetDragged = false;
         });
-        navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-            navLinks.classList.remove('active');
-            menuToggle.classList.remove('open');
-            menuToggle.setAttribute('aria-expanded', 'false');
+        navLinks.addEventListener('pointermove', e => {
+            if (sheetY === null) return;
+            const dy = e.clientY - sheetY;
+            if (!sheetDragged && Math.abs(dy) > 6) {
+                sheetDragged = true;
+                navLinks.classList.add('dragging');
+                navLinks.setPointerCapture(e.pointerId);
+            }
+            if (sheetDragged) navLinks.style.setProperty('--drag', (dy > 0 ? dy : -Math.sqrt(-dy) * 2) + 'px');
+        });
+        const endSheetDrag = e => {
+            if (sheetY === null) return;
+            const dy = e.clientY - sheetY;
+            const velocity = dy / Math.max(1, Date.now() - sheetT);
+            sheetY = null;
+            navLinks.classList.remove('dragging');
+            if (!sheetDragged) return;
+            if (dy > navLinks.offsetHeight * 0.25 || velocity > 0.4) setMenu(false);
+            else navLinks.style.setProperty('--drag', '0px');
+        };
+        navLinks.addEventListener('dragstart', e => e.preventDefault());
+        navLinks.addEventListener('pointerup', endSheetDrag);
+        navLinks.addEventListener('pointercancel', endSheetDrag);
+        // A drag that started on a link shouldn't also follow the link
+        navLinks.addEventListener('click', e => {
+            if (sheetDragged) { e.preventDefault(); e.stopPropagation(); sheetDragged = false; }
+        }, true);
+
+        /* ---------- Nav hover pill (desktop) ---------- */
+        const pill = document.createElement('li');
+        pill.className = 'nav-pill';
+        pill.setAttribute('aria-hidden', 'true');
+        navLinks.prepend(pill);
+        let pillVisible = false;
+        navLinks.querySelectorAll('a').forEach(a => a.addEventListener('pointerenter', e => {
+            if (e.pointerType !== 'mouse') return;
+            // First appearance: jump into place, then only fade in; afterwards glide
+            pill.classList.toggle('no-move', !pillVisible);
+            pill.style.transform = `translate(${a.offsetLeft}px, ${a.offsetTop}px)`;
+            pill.style.width = a.offsetWidth + 'px';
+            pill.style.height = a.offsetHeight + 'px';
+            pill.offsetWidth;
+            pill.classList.remove('no-move');
+            pill.style.opacity = '1';
+            pillVisible = true;
         }));
+        navLinks.addEventListener('pointerleave', () => { pill.style.opacity = '0'; pillVisible = false; });
 
         /* ---------- Scroll: navbar, progress, timeline ---------- */
         const navbar = document.getElementById('navbar');
@@ -2107,33 +2367,31 @@
         }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
         document.querySelectorAll('.reveal, .title-bar').forEach(el => revealObserver.observe(el));
 
-        /* ---------- Typing effect ---------- */
+        /* ---------- Rotating word ---------- */
         const words = ['LLM-powered copilots', 'RAG knowledge assistants', 'multi-agent workflows', 'predictive ML models', 'intelligent automation', 'production-grade MLOps'];
-        const typed = document.getElementById('typed');
-        if (reduceMotion) {
-            typed.textContent = words[0];
-        } else {
-            let w = 0, c = 0, deleting = false;
-            (function tick() {
-                const word = words[w];
-                c += deleting ? -1 : 1;
-                typed.textContent = word.slice(0, c);
-                let delay = deleting ? 35 : 70;
-                if (!deleting && c === word.length) { delay = 1800; deleting = true; }
-                else if (deleting && c === 0) { deleting = false; w = (w + 1) % words.length; delay = 350; }
-                setTimeout(tick, delay);
-            })();
+        const rotator = document.getElementById('rotator');
+        if (!reduceMotion) {
+            let w = 0;
+            const sizeTo = el => { rotator.style.width = el.getBoundingClientRect().width + 'px'; };
+            document.fonts.ready.then(() => sizeTo(rotator.firstElementChild));
+            setInterval(() => {
+                if (document.hidden) return;
+                w = (w + 1) % words.length;
+                const old = rotator.lastElementChild;
+                const next = document.createElement('span');
+                next.className = 'rotator-word enter';
+                next.textContent = words[w];
+                rotator.appendChild(next);
+                sizeTo(next);
+                next.offsetWidth;
+                next.classList.remove('enter');
+                old.classList.add('exit');
+                old.addEventListener('transitionend', () => old.remove(), { once: true });
+            }, 2600);
         }
 
         /* ---------- Pointer effects (desktop only) ---------- */
         if (finePointer && !reduceMotion) {
-            const glow = document.getElementById('cursorGlow');
-            window.addEventListener('pointermove', e => {
-                glow.style.opacity = '1';
-                glow.style.left = e.clientX + 'px';
-                glow.style.top = e.clientY + 'px';
-            }, { passive: true });
-
             // Spotlight position for glass cards
             document.querySelectorAll('.glass').forEach(card => {
                 card.addEventListener('pointermove', e => {
@@ -2149,7 +2407,7 @@
                     const r = card.getBoundingClientRect();
                     const x = (e.clientX - r.left) / r.width - 0.5;
                     const y = (e.clientY - r.top) / r.height - 0.5;
-                    card.style.transform = `perspective(900px) rotateX(${-y * 8}deg) rotateY(${x * 10}deg) translateY(-6px)`;
+                    card.style.transform = `perspective(900px) rotateX(${-y * 4}deg) rotateY(${x * 5}deg) translateY(-4px)`;
                 });
                 card.addEventListener('pointerleave', () => { card.style.transform = ''; });
             });
@@ -2177,12 +2435,12 @@
             W = innerWidth; H = innerHeight;
             canvas.width = W * DPR; canvas.height = H * DPR;
             ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-            const count = Math.round(Math.min(90, (W * H) / 16000));
+            const count = Math.round(Math.min(70, (W * H) / 18000));
             nodes = Array.from({ length: count }, () => ({
                 x: Math.random() * W,
                 y: Math.random() * H,
-                vx: (Math.random() - 0.5) * 0.35,
-                vy: (Math.random() - 0.5) * 0.35,
+                vx: (Math.random() - 0.5) * 0.2,
+                vy: (Math.random() - 0.5) * 0.2,
                 r: Math.random() * 1.6 + 0.6,
                 hue: Math.random() < 0.3 ? '0,212,255' : '74,159,255'
             }));
@@ -2219,11 +2477,14 @@
                 ctx.fillStyle = `rgba(${a.hue},0.75)`;
                 ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2); ctx.fill();
             }
-            if (!reduceMotion) requestAnimationFrame(draw);
+            if (animateBg && !document.hidden) requestAnimationFrame(draw);
         }
 
+        // Touch devices get a still constellation: same look, no battery drain
+        const animateBg = !reduceMotion && finePointer;
         resize();
-        window.addEventListener('resize', resize);
+        window.addEventListener('resize', () => { resize(); if (!animateBg) draw(); });
+        document.addEventListener('visibilitychange', () => { if (animateBg && !document.hidden) requestAnimationFrame(draw); });
         window.addEventListener('pointermove', e => { mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });
         document.addEventListener('pointerleave', () => { mouse.x = mouse.y = -9999; });
         draw();
@@ -2287,10 +2548,23 @@
         toast.addEventListener('pointerup', endDrag);
         toast.addEventListener('pointercancel', endDrag);
 
-        document.getElementById('contactForm').addEventListener('submit', e => {
+        const sendBtn = document.getElementById('sendBtn');
+        function setSendState(state) {
+            sendBtn.dataset.state = state;
+            sendBtn.querySelectorAll('.lbl').forEach(l => {
+                const on = l.dataset.for === state;
+                l.classList.toggle('on', on);
+                l.setAttribute('aria-hidden', !on);
+            });
+        }
+
+        document.getElementById('contactForm').addEventListener('submit', async e => {
             e.preventDefault();
             const form = e.target;
+            if (sendBtn.dataset.state !== 'idle') return;
             if (!form.checkValidity()) { form.reportValidity(); return; }
+            setSendState('loading');
+            await new Promise(r => setTimeout(r, 600));
             const name = form.name.value.trim();
             const email = form.email.value.trim();
             const company = form.company.value.trim();
@@ -2298,9 +2572,124 @@
             const subject = encodeURIComponent(`New Inquiry from ${name}`);
             const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nCompany: ${company}\n\nProject Details:\n${message}`);
             window.location.href = `mailto:contact@asapaitechlabs.com?subject=${subject}&body=${body}`;
+            setSendState('done');
             showToast('Thank you! Your email client will open to send your message. We will get back to you ASAP.');
             form.reset();
+            setTimeout(() => setSendState('idle'), 3200);
         });
+
+        /* ---------- Copy email ---------- */
+        const copyBtn = document.getElementById('copyEmail');
+        copyBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(copyBtn.dataset.copy);
+            } catch {
+                // Older browsers / restricted contexts: copy via a temporary field
+                const field = document.createElement('textarea');
+                field.value = copyBtn.dataset.copy;
+                field.setAttribute('readonly', '');
+                field.style.cssText = 'position:fixed;opacity:0;';
+                document.body.appendChild(field);
+                field.select();
+                const ok = document.execCommand('copy');
+                field.remove();
+                if (!ok) return;
+            }
+            copyBtn.classList.add('copied');
+            copyBtn.setAttribute('aria-label', 'Email address copied');
+            clearTimeout(copyBtn.t);
+            copyBtn.t = setTimeout(() => {
+                copyBtn.classList.remove('copied');
+                copyBtn.setAttribute('aria-label', 'Copy email address');
+            }, 1600);
+        });
+
+        /* ---------- Case study tabs ---------- */
+        const caseTabs = [...document.querySelectorAll('.case-tab')];
+        const caseIndicator = document.querySelector('.case-tab-indicator');
+        const caseList = document.getElementById('caseList');
+        function placeIndicator(tab) {
+            caseIndicator.style.transform = `translateX(${tab.offsetLeft}px)`;
+            caseIndicator.style.width = tab.offsetWidth + 'px';
+        }
+        function selectCase(tab) {
+            const current = caseTabs.find(t => t.getAttribute('aria-selected') === 'true');
+            if (tab === current) return;
+            const oldPanel = document.getElementById(current.getAttribute('aria-controls'));
+            const newPanel = document.getElementById(tab.getAttribute('aria-controls'));
+            caseTabs.forEach(t => {
+                const on = t === tab;
+                t.setAttribute('aria-selected', on);
+                t.tabIndex = on ? 0 : -1;
+            });
+            placeIndicator(tab);
+            tab.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+
+            // Glide the container height between panels instead of jumping
+            const from = caseList.offsetHeight;
+            oldPanel.hidden = true;
+            newPanel.hidden = false;
+            newPanel.classList.remove('entering');
+            newPanel.offsetWidth;
+            newPanel.classList.add('entering');
+            if (reduceMotion) return;
+            const to = caseList.offsetHeight;
+            caseList.style.height = from + 'px';
+            caseList.offsetWidth;
+            caseList.style.height = to + 'px';
+            caseList.addEventListener('transitionend', function done(ev) {
+                if (ev.target !== caseList) return;
+                caseList.style.height = '';
+                caseList.removeEventListener('transitionend', done);
+            });
+        }
+        caseTabs.forEach((tab, i) => {
+            tab.addEventListener('click', () => selectCase(tab));
+            tab.addEventListener('keydown', e => {
+                const dir = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+                if (!dir) return;
+                e.preventDefault();
+                const next = caseTabs[(i + dir + caseTabs.length) % caseTabs.length];
+                next.focus();
+                selectCase(next);
+            });
+        });
+        document.fonts.ready.then(() => placeIndicator(caseTabs[0]));
+        window.addEventListener('resize', () => placeIndicator(caseTabs.find(t => t.getAttribute('aria-selected') === 'true')));
+
+        document.querySelectorAll('.case-more').forEach(btn => btn.addEventListener('click', () => {
+            const open = btn.getAttribute('aria-expanded') !== 'true';
+            btn.setAttribute('aria-expanded', open);
+            btn.querySelector('span').textContent = open ? 'Hide details' : 'How it works';
+            document.getElementById(btn.getAttribute('aria-controls')).classList.toggle('open', open);
+        }));
+
+        /* ---------- Decorative loops: play on hover / when on screen ---------- */
+        function setPlaying(el, on) {
+            el.classList.toggle('anim-idle', !on);
+            el.querySelectorAll('svg').forEach(svg => {
+                if (svg.pauseAnimations) on ? svg.unpauseAnimations() : svg.pauseAnimations();
+            });
+        }
+        const iconCards = document.querySelectorAll('.service-card, .feature-card, .cta-card');
+        iconCards.forEach(card => setPlaying(card, false));
+        if (finePointer) {
+            iconCards.forEach(card => {
+                card.addEventListener('pointerenter', () => setPlaying(card, true));
+                card.addEventListener('pointerleave', () => setPlaying(card, false));
+            });
+        } else {
+            // On touch, a card's icon plays while it sits in the middle of the screen
+            const centerObserver = new IntersectionObserver(entries => {
+                entries.forEach(e => setPlaying(e.target, e.isIntersecting));
+            }, { rootMargin: '-30% 0px -30% 0px' });
+            iconCards.forEach(card => centerObserver.observe(card));
+        }
+        // Diagrams and the orbit keep moving, but only while visible
+        const onScreen = new IntersectionObserver(entries => {
+            entries.forEach(e => setPlaying(e.target, e.isIntersecting));
+        });
+        document.querySelectorAll('.case-visual, .orbit-system, .hero-stage').forEach(el => onScreen.observe(el));
     })();
     </script>
 </body>
