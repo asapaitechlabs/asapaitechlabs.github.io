@@ -1,0 +1,5 @@
+# GitHub Pages build settings.
+# Design and product notes live in the repo for the team; they are not part of the public site.
+exclude:
+  - PRODUCT.md
+  - DESIGN.md

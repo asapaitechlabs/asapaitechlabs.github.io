@@ -1,0 +1,6 @@
+# Local tooling: preview config and Impeccable working files
+.claude/
+.impeccable/review/
+.impeccable/live/
+.impeccable/questions/
+.impeccable/mocks/
