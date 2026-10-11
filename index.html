@@ -434,7 +434,8 @@
         .btn:active { transform: scale(0.97); }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--deep-blue), var(--primary-blue) 55%, var(--light-blue));
+            /* Every stop keeps white text above 4.5:1 (lightest stop #2563eb is 5.2:1) */
+            background: linear-gradient(135deg, var(--deep-blue), #1f5fe6 55%, #2563eb);
             color: white;
             box-shadow: 0 8px 24px rgba(43, 127, 255, 0.35);
         }
