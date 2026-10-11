@@ -587,6 +587,66 @@
             transition: opacity 300ms var(--ease-out);
         }
 
+        /* ---------- Intro video ---------- */
+        .video-frame {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 0.6rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 30px 80px -30px rgba(43, 127, 255, 0.45);
+        }
+
+        .video-frame video {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 9;
+            border-radius: 14px;
+            background: var(--bg-mid);
+        }
+
+        .video-play {
+            position: absolute;
+            inset: 0.6rem;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+            border: 0;
+            border-radius: 14px;
+            background: radial-gradient(circle at center, rgba(5, 10, 33, 0.15), rgba(5, 10, 33, 0.55));
+            color: white;
+            cursor: pointer;
+            transition: opacity var(--dur-ui) var(--ease-out);
+        }
+
+        .video-play svg {
+            width: 84px;
+            height: 84px;
+            padding: 24px 22px 24px 26px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--deep-blue), #1f5fe6 55%, #2563eb);
+            box-shadow: 0 0 0 10px rgba(43, 127, 255, 0.18), 0 14px 40px rgba(43, 127, 255, 0.55);
+            transition: transform 300ms var(--ease-out), box-shadow 300ms var(--ease-out);
+        }
+
+        .video-play:active svg { transform: scale(0.94); }
+        .video-play:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+        .video-len {
+            font-family: var(--font-head);
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            padding: 0.25rem 0.7rem;
+            border-radius: 999px;
+            background: rgba(5, 10, 33, 0.6);
+            border: 1px solid var(--border);
+        }
+
+        .video-frame.playing .video-play { opacity: 0; pointer-events: none; }
+
         /* ---------- Services ---------- */
         .services-grid {
             display: grid;
@@ -1384,6 +1444,8 @@
             .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(43, 127, 255, 0.55); }
             .btn-secondary:hover { background: rgba(43, 127, 255, 0.18); transform: translateY(-2px); }
             .btn:hover:active { transform: scale(0.97); }
+            .video-play:hover svg { transform: scale(1.06); box-shadow: 0 0 0 14px rgba(43, 127, 255, 0.22), 0 18px 48px rgba(43, 127, 255, 0.65); }
+            .video-play:hover:active svg { transform: scale(0.94); }
 
             .glass:hover::before, .glass:hover::after { opacity: 1; }
 
@@ -1509,6 +1571,11 @@
             .contact-info, .contact-form { padding: 1.6rem; }
             .orbit .node span { width: 70px; height: 32px; left: -35px; top: -16px; font-size: 0.72rem; }
             .scroll-cue { display: none; }
+            .video-frame { padding: 0.35rem; border-radius: 16px; }
+            .video-frame video, .video-play { border-radius: 12px; }
+            .video-play { inset: 0.35rem; gap: 0.45rem; }
+            .video-play svg { width: 56px; height: 56px; padding: 16px 14px 16px 18px; box-shadow: 0 0 0 6px rgba(43, 127, 255, 0.18), 0 10px 28px rgba(43, 127, 255, 0.5); }
+            .video-len { font-size: 0.7rem; padding: 0.15rem 0.55rem; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -1609,6 +1676,24 @@
             </div>
         </div>
         <a href="#services" class="scroll-cue" aria-label="Scroll to services"></a>
+    </section>
+
+    <!-- Intro video -->
+    <section class="section intro-video" id="intro">
+        <div class="container">
+            <span class="eyebrow reveal">See it in 90 seconds</span>
+            <h2 class="section-title reveal">Why AI, Why Now, and How We Help</h2>
+            <div class="title-bar"></div>
+            <div class="video-frame glass reveal zoom" id="videoFrame">
+                <video id="introVideo" preload="none" playsinline poster="assets/asap-intro-poster.jpg" width="1920" height="1080" aria-label="ASAP.ai TECHLABS introduction video">
+                    <source src="assets/asap-intro.mp4" type="video/mp4">
+                </video>
+                <button type="button" class="video-play" id="videoPlay" aria-label="Play the 90-second introduction video">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>
+                    <span class="video-len">1:33</span>
+                </button>
+            </div>
+        </div>
     </section>
 
     <!-- Services -->
@@ -2352,9 +2437,11 @@
         const linkMap = new Map([...navLinks.querySelectorAll('a')].map(a => [a.getAttribute('href').slice(1), a]));
         const secObserver = new IntersectionObserver(entries => {
             entries.forEach(e => {
-                if (e.isIntersecting && linkMap.has(e.target.id)) {
+                // The intro video has no nav link of its own; it belongs with the hero
+                const id = e.target.id === 'intro' ? 'home' : e.target.id;
+                if (e.isIntersecting && linkMap.has(id)) {
                     linkMap.forEach(a => a.classList.remove('active'));
-                    linkMap.get(e.target.id).classList.add('active');
+                    linkMap.get(id).classList.add('active');
                 }
             });
         }, { rootMargin: '-45% 0px -50% 0px' });
@@ -2367,6 +2454,25 @@
             });
         }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
         document.querySelectorAll('.reveal, .title-bar').forEach(el => revealObserver.observe(el));
+
+        /* ---------- Intro video ---------- */
+        // Nothing downloads until the visitor presses play; native controls take over after that
+        const introVideo = document.getElementById('introVideo');
+        const videoFrame = document.getElementById('videoFrame');
+        document.getElementById('videoPlay').addEventListener('click', () => {
+            introVideo.controls = true;
+            introVideo.play();
+        });
+        introVideo.addEventListener('play', () => videoFrame.classList.add('playing'));
+        introVideo.addEventListener('ended', () => {
+            introVideo.controls = false;
+            introVideo.load(); // back to the poster, ready to replay
+            videoFrame.classList.remove('playing');
+        });
+        // Pause when scrolled out of view so it never talks over the rest of the page
+        new IntersectionObserver(([e]) => {
+            if (!e.isIntersecting && !introVideo.paused) introVideo.pause();
+        }, { threshold: 0.25 }).observe(introVideo);
 
         /* ---------- Rotating word ---------- */
         const words = ['LLM-powered copilots', 'RAG knowledge assistants', 'multi-agent workflows', 'predictive ML models', 'intelligent automation', 'production-grade MLOps'];
