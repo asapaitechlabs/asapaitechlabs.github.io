@@ -614,11 +614,17 @@
         .services-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            grid-auto-rows: minmax(240px, auto);
             gap: 1.25rem;
         }
         .service-card.wide { grid-column: span 2; }
-        .service-card.tall { grid-row: span 2; }
+        /* Full-width last row: icon, text and tags side by side instead of a tall empty card */
+        .service-card.banner {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 1.25rem 2rem;
+        }
 
         .service-card {
             padding: 2rem;
@@ -649,7 +655,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: auto;
+            flex-shrink: 0;
+            margin-bottom: 1.6rem;
             position: relative;
             transition: transform 400ms var(--ease-out), box-shadow 400ms var(--ease-out);
         }
@@ -660,7 +667,7 @@
         .service-card h3 {
             font-size: 1.3rem;
             letter-spacing: -0.01em;
-            margin: 2rem 0 0.6rem;
+            margin: 0 0 0.6rem;
             color: var(--ink);
         }
         .service-card.feature h3 { font-size: clamp(1.6rem, 2.4vw, 2.1rem); letter-spacing: -0.025em; line-height: 1.1; max-width: 14em; }
@@ -673,10 +680,16 @@
             align-items: center;
             justify-content: space-between;
             gap: 0.8rem 1.5rem;
-            margin-top: 1.4rem;
+            /* Footer sits on the card's bottom edge so footers line up across a row; the text stays under the icon */
+            margin-top: auto;
             padding-top: 1rem;
             border-top: 1px solid var(--border);
         }
+        .service-card > p { margin-bottom: 1.4rem; }
+        .service-card > p:last-child { margin-bottom: 0; }
+        .service-card.banner .service-icon { margin-bottom: 0; }
+        .service-card.banner p { margin: 0; }
+        .service-card.banner .service-foot { margin: 0; padding: 0; border: 0; justify-content: flex-end; }
         .proof-link {
             font-family: var(--font-mono);
             font-size: 0.78rem;
@@ -688,6 +701,8 @@
 
         /* ---------- Case studies: cards that stack as you scroll ---------- */
         .case-list { display: grid; gap: 2.5rem; }
+        /* "See it in" links land below the fixed nav, not under it */
+        .case { scroll-margin-top: 88px; }
         .case-shade {
             position: absolute;
             inset: 0;
@@ -933,7 +948,7 @@
         .pstep {
             position: relative;
             width: min(400px, 78vw);
-            min-height: 340px;
+            min-height: 300px;
             padding: 2rem;
             display: flex;
             flex-direction: column;
@@ -948,12 +963,13 @@
             letter-spacing: -0.05em;
             color: transparent;
             -webkit-text-stroke: 1px rgba(255, 255, 255, 0.22);
-            margin-bottom: auto;
+            margin-bottom: 1.6rem;
             transition: color 400ms var(--ease-out), -webkit-text-stroke-color 400ms var(--ease-out);
         }
-        .pstep h3 { font-size: 1.5rem; letter-spacing: -0.02em; color: var(--ink); margin: 2rem 0 0.5rem; }
+        .pstep h3 { font-size: 1.5rem; letter-spacing: -0.02em; color: var(--ink); margin: 0 0 0.5rem; }
         .pstep p { color: var(--text-muted); }
-        .pstep .mono { margin-top: 1.2rem; color: var(--accent); }
+        /* Number and text stay together at the top; only the tag sits on the bottom edge */
+        .pstep .mono { margin-top: auto; padding-top: 1.2rem; color: var(--accent); }
         .pstep.active { border-color: rgba(0, 212, 255, 0.35); }
         .pstep.active .pstep-num { color: var(--accent); -webkit-text-stroke-color: var(--accent); }
 
@@ -1414,7 +1430,6 @@
         @media (max-width: 1100px) {
             .services-grid { grid-template-columns: repeat(2, 1fr); }
             .service-card.wide { grid-column: span 2; }
-            .service-card.tall { grid-row: auto; grid-column: span 2; }
             .hero-content { grid-template-columns: 1.4fr 1fr; gap: 2rem; }
         }
 
@@ -1507,7 +1522,10 @@
         @media (max-width: 680px) {
             .section { padding: 4.5rem 5% 5rem; }
             .services-grid { grid-template-columns: 1fr; grid-auto-rows: auto; }
-            .service-card.wide, .service-card.tall { grid-column: auto; }
+            .service-card.wide { grid-column: auto; }
+            .service-card.banner { display: flex; }
+            .service-card.banner .service-icon { margin-bottom: 1.6rem; }
+            .service-card.banner .service-foot { margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid var(--border); justify-content: space-between; }
             .cta-cards { grid-template-columns: 1fr; }
             .cta-card { grid-template-columns: 48px 1fr auto; padding: 1.2rem; gap: 1rem; }
             .cta-icon { width: 48px; height: 48px; }
@@ -1524,7 +1542,7 @@
             .edge { padding: 1.3rem; grid-template-columns: 44px 1fr; }
             .feature-icon { width: 44px; height: 44px; }
             .orbit .node span { width: 70px; height: 32px; left: -35px; top: -16px; font-size: 0.72rem; }
-            .pstep { min-height: 300px; padding: 1.6rem; }
+            .pstep { min-height: 0; padding: 1.6rem; }
             .pstep-num { font-size: 4.5rem; }
         }
 
@@ -1672,7 +1690,7 @@
                     <p>LLM-powered assistants, document question-answering and AI agents, built on your own data and tested before they reach your users.</p>
                     <div class="service-foot"><span class="mono">LLMs · RAG · Agents · Fine-tuning</span><a class="proof-link" href="#case-3">See it in: Contract AI <span>→</span></a></div>
                 </article>
-                <article class="service-card glass reveal tilt tall feature" style="--d:0.1s">
+                <article class="service-card glass reveal tilt feature" style="--d:0.1s">
                     <span class="card-num">02</span>
                     <div class="service-icon">
                         <svg viewBox="0 0 100 100" aria-hidden="true">
@@ -1763,7 +1781,7 @@
                     <p>AI agents that take over repetitive checks and updates, with a record of every decision they make.</p>
                     <div class="service-foot"><span class="mono">Agents · Workflows</span><a class="proof-link" href="#case-2">See it in: Listings agent <span>→</span></a></div>
                 </article>
-                <article class="service-card glass reveal tilt wide" style="--d:0.1s">
+                <article class="service-card glass reveal banner" style="--d:0.1s">
                     <span class="card-num">06</span>
                     <div class="service-icon">
                         <svg viewBox="0 0 100 100" aria-hidden="true">
@@ -1782,8 +1800,10 @@
                             <text x="50" y="55" text-anchor="middle" fill="white" font-size="13" font-weight="bold" font-family="Sora, sans-serif">AI</text>
                         </svg>
                     </div>
-                    <h3>Custom AI integration</h3>
-                    <p>We fit AI into the systems you already run, on the cloud platform you already use, without locking you into one vendor.</p>
+                    <div class="service-text">
+                        <h3>Custom AI integration</h3>
+                        <p>We fit AI into the systems you already run, on the cloud platform you already use, without locking you into one vendor.</p>
+                    </div>
                     <div class="service-foot"><span class="mono">OpenAI · Azure AI · Google Cloud AI · AWS</span></div>
                 </article>
             </div>
